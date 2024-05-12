@@ -1,0 +1,15 @@
+{
+    "lang" : "Home loan emi calculator",
+    "profile" : "Profiles",
+    "loanAmount" : "Loan Amount",
+    "tenure" : "Tenure (Years)",
+    "intrest" : "Interest Rate (% P.A.)",
+    "loanEmi" : "Loan EMI",
+    "totalIntrest" : "Total Intrest Payable",
+    "totalPayment" : "Total Payment \n (Principle + intrest)",
+    "saveProfile" : "Save Profile",
+    "addProfile" : "Add Profile Name",
+    "enterProfile" : "Enter Profile Name",
+    "cancel" : "cancel",
+    "save" : "save"
+}
