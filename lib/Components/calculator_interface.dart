@@ -57,6 +57,15 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
     calculateTotal();
   }
 
+  String indianFormatNumber(double amount) {
+    String numberFormat =
+        NumberFormat.currency(locale: 'HI', symbol: '₹ ', decimalDigits: 0)
+            .format(amount.toInt())
+            .toString();
+
+    return numberFormat;
+  }
+
   void calculateTotal() {
     double mothlyIntrest = (intrestRate / 12) / 100;
     double months = loanTenure * 12;
@@ -80,25 +89,59 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
 
   void update() {
     if (myList.isNotEmpty) {
-      setState(() {
-        updateProfileFlag = false;
-        myList[profileIndex].dateTime =
-            DateFormat('\tkk:mm:ss\nEEE d MMM yyyy').format(DateTime.now());
-        myList[profileIndex].totalAmount = totalPayment.toInt().toString();
-        myList[profileIndex].totalIntrestAmount =
-            totalIntrest.toStringAsFixed(2);
-        myList[profileIndex].tenureInYears = years.toInt().toString();
-        myList[profileIndex].monthlyEmi = monthlyEmi.toInt().toString();
-        List<String> data = myList.map((e) => jsonEncode(e.toJson())).toList();
-        sp.setStringList("profileList", data);
-      });
-      Navigator.pushNamedAndRemoveUntil(
-          context, "/profiles", ModalRoute.withName('/calculator'));
+      double tPayment = double.parse(myList[profileIndex].totalAmount!);
+      double tIntrest = double.parse(myList[profileIndex].totalIntrestAmount!);
+      double tYears = double.parse(myList[profileIndex].tenureInYears!);
+      double mEmi = double.parse(myList[profileIndex].monthlyEmi!);
+      if (years != 15 &&
+          totalIntrest.toInt() != 668622 &&
+          totalPayment != 1668662) {
+        setState(() {
+          updateProfileFlag = false;
+          myList[profileIndex].dateTime =
+              DateFormat('\tkk:mm:ss\nEEE d MMM yyyy').format(DateTime.now());
+          myList[profileIndex].totalAmount = totalPayment.toInt().toString();
+          myList[profileIndex].totalIntrestAmount =
+              totalIntrest.toInt().toString();
+          myList[profileIndex].tenureInYears = years.toInt().toString();
+          myList[profileIndex].monthlyEmi = monthlyEmi.toInt().toString();
+          myList[profileIndex].intrestrate = intrestRate.toStringAsFixed(2);
+          myList[profileIndex].loanvalue = loanAmount.toInt().toString();
+          List<String> data =
+              myList.map((e) => jsonEncode(e.toJson())).toList();
+          sp.setStringList("profileList", data);
+          Navigator.popAndPushNamed(context, "/profiles");
+        });
+      } else {
+        setState(() {
+          updateProfileFlag = false;
+          myList[profileIndex].dateTime =
+              DateFormat('\tkk:mm:ss\nEEE d MMM yyyy').format(DateTime.now());
+          myList[profileIndex].totalAmount = tPayment.toInt().toString();
+          myList[profileIndex].totalIntrestAmount = tIntrest.toInt().toString();
+          myList[profileIndex].tenureInYears = tYears.toInt().toString();
+          myList[profileIndex].monthlyEmi = mEmi.toInt().toString();
+          myList[profileIndex].intrestrate = intrestRate.toStringAsFixed(2);
+          myList[profileIndex].loanvalue = loanAmount.toInt().toString();
+          List<String> data =
+              myList.map((e) => jsonEncode(e.toJson())).toList();
+          sp.setStringList("profileList", data);
+          Navigator.popAndPushNamed(context, "/profiles");
+        });
+      }
     }
   }
 
   @override
   void initState() {
+    if (updateProfileFlag) {
+      setState(() {
+        loanTenure = tYear!;
+        intrestRate = irate!;
+        loanAmount = lAmount!;
+      });
+    }
+
     instantiate();
     getProfiles();
     calculateTotal();
@@ -117,7 +160,7 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
                     Navigator.popAndPushNamed(context, '/profiles');
                   },
                   child: Text(AppLocalizations.of(context)!.profile))
-              : Text("is $updateProfileFlag"),
+              : Container(),
           Consumer<LanguageChangeController>(
               builder: (context, provide, child) {
             return PopupMenuButton(
@@ -141,162 +184,169 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
           })
         ],
       ),
-      body: Center(
-        child: Column(children: [
-          AmountSlider(
-              id: 1,
-              min: 100000,
-              max: 100000000,
-              amount: loanAmount,
-              updateValue: updateValue,
-              title: AppLocalizations.of(context)!.loanAmount),
-          AmountSlider(
-              id: 2,
-              min: 1,
-              max: 30,
-              amount: loanTenure,
-              updateValue: updateValue,
-              title: AppLocalizations.of(context)!.tenure),
-          AmountSlider(
-              id: 3,
-              min: 1,
-              max: 15,
-              amount: intrestRate,
-              updateValue: updateValue,
-              title: AppLocalizations.of(context)!.intrest),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  margin: const EdgeInsets.symmetric(vertical: 1),
-                  height: 50,
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black)),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(AppLocalizations.of(context)!.loanEmi),
-                        Text("${monthlyEmi.toInt()}")
-                      ]),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  margin: const EdgeInsets.symmetric(vertical: 1),
-                  height: 50,
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black)),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(AppLocalizations.of(context)!.totalIntrest),
-                        Text(totalIntrest.toStringAsFixed(2))
-                      ]),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  margin: const EdgeInsets.symmetric(vertical: 1),
-                  height: 50,
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black)),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(AppLocalizations.of(context)!.totalPayment),
-                        Text("${totalPayment.toInt()}")
-                      ]),
-                ),
-              ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(children: [
+            AmountSlider(
+                id: 1,
+                min: 100000,
+                max: 100000000,
+                amount: loanAmount,
+                updateValue: updateValue,
+                title: AppLocalizations.of(context)!.loanAmount),
+            AmountSlider(
+                id: 2,
+                min: 1,
+                max: 30,
+                amount: loanTenure,
+                updateValue: updateValue,
+                title: AppLocalizations.of(context)!.tenure),
+            AmountSlider(
+                id: 3,
+                min: 1,
+                max: 15,
+                amount: intrestRate,
+                updateValue: updateValue,
+                title: AppLocalizations.of(context)!.intrest),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 1),
+                    height: 50,
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.black)),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)!.loanEmi),
+                          Text(indianFormatNumber(monthlyEmi))
+                        ]),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 1),
+                    height: 50,
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.black)),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)!.totalIntrest),
+                          Text(indianFormatNumber(totalIntrest))
+                        ]),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 1),
+                    height: 50,
+                    decoration:
+                        BoxDecoration(border: Border.all(color: Colors.black)),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)!.totalPayment),
+                          Text(indianFormatNumber(totalPayment))
+                        ]),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton(
-                style: TextButton.styleFrom(
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero),
-                  minimumSize: const Size(double.infinity, 50),
-                ),
-                onPressed: () {
-                  !updateProfileFlag
-                      ? showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text(
-                                  AppLocalizations.of(context)!.addProfile),
-                              content: Form(
-                                key: _formKey,
-                                child: TextFormField(
-                                  controller: _textController,
-                                  onChanged: (value) {},
-                                  decoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)!
-                                          .enterProfile),
-                                  validator: (value) => value == ""
-                                      ? "Please enter profile name"
-                                      : null,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton(
+                  style: TextButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  onPressed: () {
+                    !updateProfileFlag
+                        ? showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                    AppLocalizations.of(context)!.addProfile),
+                                content: Form(
+                                  key: _formKey,
+                                  child: TextFormField(
+                                    controller: _textController,
+                                    onChanged: (value) {},
+                                    decoration: InputDecoration(
+                                        hintText: AppLocalizations.of(context)!
+                                            .enterProfile),
+                                    validator: (value) => value == ""
+                                        ? "Please enter profile name"
+                                        : null,
+                                  ),
                                 ),
-                              ),
-                              actions: [
-                                ElevatedButton(
-                                    style: TextButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8))),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                        AppLocalizations.of(context)!.cancel)),
-                                ElevatedButton(
-                                    style: TextButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8))),
-                                    ),
-                                    onPressed: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        myList.add(LoanProfile(
-                                          dateTime: DateFormat(
-                                                  '\tkk:mm:ss\nEEE d MMM yyyy')
-                                              .format(DateTime.now()),
-                                          profilename: _textController.text,
-                                          totalAmount:
-                                              totalPayment.toInt().toString(),
-                                          totalIntrestAmount:
-                                              totalIntrest.toInt().toString(),
-                                          tenureInYears:
-                                              years.toInt().toString(),
-                                          monthlyEmi:
-                                              monthlyEmi.toInt().toString(),
-                                        ));
-
-                                        List<String> data = myList
-                                            .map((e) => jsonEncode(e.toJson()))
-                                            .toList();
-
-                                        setState(() {
-                                          sp.setStringList("profileList", data);
-                                          _textController.text = "";
-                                        });
-
+                                actions: [
+                                  ElevatedButton(
+                                      style: TextButton.styleFrom(
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8))),
+                                      ),
+                                      onPressed: () {
                                         Navigator.pop(context);
-                                      }
-                                    },
-                                    child: Text(
-                                        AppLocalizations.of(context)!.save))
-                              ],
-                            );
-                          })
-                      : update();
-                },
-                child: Text(AppLocalizations.of(context)!.saveProfile)),
-          )
-        ]),
+                                      },
+                                      child: Text(AppLocalizations.of(context)!
+                                          .cancel)),
+                                  ElevatedButton(
+                                      style: TextButton.styleFrom(
+                                        shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(8))),
+                                      ),
+                                      onPressed: () {
+                                        if (_formKey.currentState!.validate()) {
+                                          myList.add(LoanProfile(
+                                            dateTime: DateFormat(
+                                                    '\tkk:mm:ss\nEEE d MMM yyyy')
+                                                .format(DateTime.now()),
+                                            profilename: _textController.text,
+                                            totalAmount:
+                                                totalPayment.toInt().toString(),
+                                            totalIntrestAmount:
+                                                totalIntrest.toInt().toString(),
+                                            tenureInYears:
+                                                years.toInt().toString(),
+                                            monthlyEmi:
+                                                monthlyEmi.toInt().toString(),
+                                            intrestrate:
+                                                intrestRate.toStringAsFixed(2),
+                                            loanvalue:
+                                                loanAmount.toInt().toString(),
+                                          ));
+
+                                          List<String> data = myList
+                                              .map(
+                                                  (e) => jsonEncode(e.toJson()))
+                                              .toList();
+
+                                          setState(() {
+                                            sp.setStringList(
+                                                "profileList", data);
+                                            _textController.text = "";
+                                          });
+
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      child: Text(
+                                          AppLocalizations.of(context)!.save))
+                                ],
+                              );
+                            })
+                        : update();
+                  },
+                  child: Text(AppLocalizations.of(context)!.saveProfile)),
+            )
+          ]),
+        ),
       ),
     );
   }

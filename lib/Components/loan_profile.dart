@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class LoanProfile extends StatelessWidget {
   String? dateTime,
       profilename,
-      totalAmount,
       totalIntrestAmount,
+      totalAmount,
+      monthlyEmi,
       tenureInYears,
-      monthlyEmi;
+      loanvalue,
+      intrestrate;
 
   final int? id;
 
@@ -23,6 +26,8 @@ class LoanProfile extends StatelessWidget {
     this.totalIntrestAmount,
     this.monthlyEmi,
     this.tenureInYears,
+    this.intrestrate,
+    this.loanvalue,
     this.id,
     this.delete,
     this.update,
@@ -35,6 +40,8 @@ class LoanProfile extends StatelessWidget {
         totalIntrestAmount: json["totalIntrestAmount"],
         tenureInYears: json["tenureInYears"],
         monthlyEmi: json["monthlyEmi"],
+        intrestrate: json["intrestrate"],
+        loanvalue: json["loanvalue"],
         id: json["id"],
         delete: (int) => dynamic,
         update: (int) => dynamic,
@@ -46,8 +53,20 @@ class LoanProfile extends StatelessWidget {
         "totalAmount": totalAmount,
         "totalIntrestAmount": totalIntrestAmount,
         "tenureInYears": tenureInYears,
-        "monthlyEmi": monthlyEmi
+        "monthlyEmi": monthlyEmi,
+        "intrestrate": intrestrate,
+        "loanvalue": loanvalue,
       };
+
+  String indianFormatNumber(String amount) {
+    double tAmount = double.parse(amount);
+    String numberFormat =
+        NumberFormat.currency(locale: 'HI', symbol: '₹ ', decimalDigits: 0)
+            .format(tAmount.toInt())
+            .toString();
+
+    return numberFormat;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +95,15 @@ class LoanProfile extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("${AppLocalizations.of(context)!.loanEmi} : $monthlyEmi"),
+              Text(
+                  "${AppLocalizations.of(context)!.loanEmi} : ${indianFormatNumber(monthlyEmi!)}"),
               Text("${AppLocalizations.of(context)!.tenure} : $tenureInYears")
             ],
           ),
-          Text("${AppLocalizations.of(context)!.totalPayment} : $totalAmount"),
           Text(
-              "${AppLocalizations.of(context)!.totalIntrest} : $totalIntrestAmount"),
+              "${AppLocalizations.of(context)!.totalPayment} : ${indianFormatNumber(totalAmount!)}"),
+          Text(
+              "${AppLocalizations.of(context)!.totalIntrest} : ${indianFormatNumber(totalIntrestAmount!)}"),
           Container(
             margin: const EdgeInsets.only(top: 10),
             child: Row(
@@ -96,7 +117,7 @@ class LoanProfile extends StatelessWidget {
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
-                    child: const Text("Delete")),
+                    child: Text(AppLocalizations.of(context)!.delete)),
                 ElevatedButton(
                     onPressed: () {
                       update!(id!);
@@ -105,7 +126,7 @@ class LoanProfile extends StatelessWidget {
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(5))),
                     ),
-                    child: const Text("Edit"))
+                    child: Text(AppLocalizations.of(context)!.update))
               ],
             ),
           )

@@ -8,6 +8,7 @@ import 'package:emi_calculator/controller/language_change_controller.dart';
 
 bool updateProfileFlag = false;
 int profileIndex = 0;
+double? tYear = 0, irate = 0, lAmount;
 
 enum Language { english, hindi, telugu }
 
@@ -41,16 +42,47 @@ class _ProfileListState extends State<ProfileList> {
   }
 
   void deleteProfile(int index) {
-    profileList.removeAt(index);
-    List<String> data = profileList.map((e) => jsonEncode(e.toJson())).toList();
-    sp.setStringList("profileList", data);
-    setState(() {});
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.addProfile),
+            actions: [
+              ElevatedButton(
+                  style: TextButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(AppLocalizations.of(context)!.cancel)),
+              ElevatedButton(
+                  style: TextButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))),
+                  ),
+                  onPressed: () {
+                    profileList.removeAt(index);
+                    List<String> data =
+                        profileList.map((e) => jsonEncode(e.toJson())).toList();
+                    sp.setStringList("profileList", data);
+                    Navigator.pop(context);
+                    setState(() {});
+                  },
+                  child: Text(AppLocalizations.of(context)!.delete))
+            ],
+          );
+        });
   }
 
   void updateProfile(int index) {
     setState(() {
       updateProfileFlag = true;
       profileIndex = index;
+      tYear = double.parse(profileList[index].tenureInYears!);
+      irate = double.parse(profileList[index].intrestrate!);
+      lAmount = double.parse(profileList[index].loanvalue!);
     });
     Navigator.popAndPushNamed(context, "/calculator");
   }
@@ -102,6 +134,8 @@ class _ProfileListState extends State<ProfileList> {
                   totalIntrestAmount: profileList[index].totalIntrestAmount,
                   monthlyEmi: profileList[index].monthlyEmi,
                   tenureInYears: profileList[index].tenureInYears,
+                  intrestrate: profileList[index].intrestrate,
+                  loanvalue: profileList[index].loanvalue,
                   id: index,
                   delete: deleteProfile,
                   update: updateProfile,

@@ -9,7 +9,12 @@
     "totalPayment" : "कुल भुगतान (मूलधन + ब्याज)",
     "saveProfile" : "प्रोफ़ाइल स्टोर करें",
     "addProfile" : "प्रोफ़ाइल नाम जोड़ें",
+    "enterAmount" : "एंटर वैल्यू",
+    "deleteProfile" : "प्रोफ़ाइल हटाएं",
     "enterProfile" : "प्रोफ़ाइल नाम दर्ज करें",
     "cancel" : "रद्द",
-    "save" : "स्टोर करें"
+    "save" : "स्टोर करें",
+    "delete" : "डिलीट",
+    "update" : "एडिट"
+
 }

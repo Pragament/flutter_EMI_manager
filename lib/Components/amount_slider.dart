@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AmountSlider extends StatefulWidget {
   final String title;
@@ -21,6 +23,17 @@ class AmountSlider extends StatefulWidget {
 
 class _AmountSliderState extends State<AmountSlider> {
   double? amount;
+  final TextEditingController _textController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  String indianFormatNumber(double amount, int id) {
+    if (id == 2) return amount.toInt().toString();
+    String format =
+        NumberFormat.currency(locale: 'HI', symbol: '₹ ', decimalDigits: 0)
+            .format(amount.toInt())
+            .toString();
+    return format;
+  }
 
   @override
   void initState() {
@@ -41,14 +54,73 @@ class _AmountSliderState extends State<AmountSlider> {
             children: [
               Text(widget.title),
               Container(
-                height: 30,
-                width: 100,
+                height: 40,
+                width: 150,
                 decoration:
                     BoxDecoration(border: Border.all(color: Colors.black)),
-                child: Center(
+                child: TextButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: Form(
+                              key: _formKey,
+                              child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                      hintText: AppLocalizations.of(context)!
+                                          .enterAmount),
+                                  controller: _textController,
+                                  onChanged: (value) {},
+                                  validator: (value) {
+                                    if (value == '' ||
+                                        double.parse(value!) < widget.min ||
+                                        double.parse(value) > widget.max) {
+                                      return "please enter a valid value";
+                                    }
+                                    return null;
+                                  }),
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                  style: TextButton.styleFrom(
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                  ),
+                                  onPressed: () {
+                                    _textController.text = "";
+                                    setState(() {});
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                      AppLocalizations.of(context)!.cancel)),
+                              ElevatedButton(
+                                  style: TextButton.styleFrom(
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                  ),
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      amount =
+                                          double.parse(_textController.text);
+                                      widget.updateValue(amount!, widget.id);
+                                      _textController.text = "";
+                                      setState(() {});
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  child:
+                                      Text(AppLocalizations.of(context)!.save)),
+                            ],
+                          );
+                        });
+                  },
                   child: Text(widget.id == 3
                       ? amount!.toStringAsFixed(2)
-                      : "${amount!.toInt()}"),
+                      : indianFormatNumber(amount!, widget.id)),
                 ),
               ),
             ],

@@ -9,7 +9,11 @@
     "totalPayment" : "Total Payment \n (Principle + intrest)",
     "saveProfile" : "Save Profile",
     "addProfile" : "Add Profile Name",
+    "enterAmount" : "Enter value",
+    "deleteProfile" : "Delete proflile",
     "enterProfile" : "Enter Profile Name",
     "cancel" : "cancel",
-    "save" : "save"
+    "save" : "save",
+    "delete" : "delete",
+    "update" : "update"
 }
