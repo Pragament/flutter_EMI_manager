@@ -95,7 +95,8 @@ class _HomePageState extends State<HomePage> {
         body: Consumer<LanguageChangeController>(
             builder: (context, provide, child) {
           return Center(
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Text(
@@ -105,15 +106,13 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 width: double.infinity,
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
                 height: 50,
                 child: ElevatedButton(
-                    onPressed: () async {
+                    onPressed: () {
                       provide.changeLanguage(const Locale('en'));
-                      sp = await SharedPreferences.getInstance();
-                      await sp.setBool('isSet', true);
-                      await sp.setString('language_code', 'en');
-                      Navigator.pushNamed(context, "/onboarding");
+                      Navigator.pushNamed(context, "/calculator");
                     },
                     child: const Text(
                       "English",
@@ -122,15 +121,13 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 width: double.infinity,
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
                 height: 50,
                 child: ElevatedButton(
-                    onPressed: () async {
+                    onPressed: () {
                       provide.changeLanguage(const Locale('hi'));
-                      sp = await SharedPreferences.getInstance();
-                      await sp.setBool('isSet', true);
-                      await sp.setString('language_code', 'hi');
-                      Navigator.pushNamed(context, "/onboarding");
+                      Navigator.pushNamed(context, "/calculator");
                     },
                     child: const Text(
                       "हिंदी",
@@ -139,15 +136,13 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 width: double.infinity,
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
                 height: 50,
                 child: ElevatedButton(
-                    onPressed: () async {
+                    onPressed: () {
                       provide.changeLanguage(const Locale('te'));
-                      sp = await SharedPreferences.getInstance();
-                      await sp.setBool('isSet', true);
-                      await sp.setString('language_code', 'te');
-                      Navigator.pushNamed(context, "/onboarding");
+                      Navigator.pushNamed(context, "/calculator");
                     },
                     child: const Text(
                       "టెలిగు",

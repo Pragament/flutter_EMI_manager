@@ -38,6 +38,7 @@ dependencies:
   intl: any
   intl_utils:
   shared_preferences:
+  fl_chart:
   flutter_localizations:
     sdk : flutter
   introduction_screen: ^3.1.14
