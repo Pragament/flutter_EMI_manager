@@ -15,7 +15,7 @@ class AmountSlider extends StatefulWidget {
       required this.max,
       required this.updateValue,
       required this.id,
-      required this.title});
+      required this.title, required String unit});
 
   @override
   State<AmountSlider> createState() => _AmountSliderState();

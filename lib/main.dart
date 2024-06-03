@@ -1,3 +1,4 @@
+import 'package:emi_calculator/Components/onboarding_carousel.dart';
 import 'package:emi_calculator/Components/profile_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,14 +12,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences sp = await SharedPreferences.getInstance();
   final String languageCode = sp.getString('language_code') ?? 'en';
+  final bool isSet = sp.getBool('isSet') ?? false;
+
   runApp(MyApp(
     locale: languageCode,
+    isSet: isSet,
   ));
 }
 
 class MyApp extends StatelessWidget {
   final String? locale;
-  const MyApp({super.key, this.locale});
+  final bool isSet;
+  const MyApp({super.key, this.locale, required this.isSet});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +35,7 @@ class MyApp extends StatelessWidget {
         builder: (context, provider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            locale: locale == ""
-                ? const Locale('en')
-                : provider.applocale ?? Locale(locale!),
+            locale: provider.applocale ?? Locale(locale!),
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
@@ -41,13 +44,16 @@ class MyApp extends StatelessWidget {
             ],
             supportedLocales: const [
               Locale('en'), // English
-              Locale('hi'), // hindi
-              Locale('te') // telegu
+              Locale('hi'), // Hindi
+              Locale('te') // Telugu
             ],
+            initialRoute: isSet ? '/calculator' : '/',
             routes: {
               "/": (context) => const HomePage(),
+              "/home": (context) => const HomePage(),
+              "/onboarding": (context) => OnboardingScreen(),
               "/calculator": (context) => const CalculatorInterface(),
-              "/profiles": (context) => const ProfileList()
+              "/profiles": (context) => const ProfileList(),
             },
           );
         },
@@ -57,9 +63,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-  });
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -73,8 +77,8 @@ class _HomePageState extends State<HomePage> {
     final bool isSet = sp.getBool('isSet') ?? false;
 
     if (isSet) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const CalculatorInterface()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const CalculatorInterface()));
     }
   }
 
@@ -91,8 +95,7 @@ class _HomePageState extends State<HomePage> {
         body: Consumer<LanguageChangeController>(
             builder: (context, provide, child) {
           return Center(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Text(
@@ -102,13 +105,15 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 width: double.infinity,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
                 height: 50,
                 child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       provide.changeLanguage(const Locale('en'));
-                      Navigator.pushNamed(context, "/calculator");
+                      sp = await SharedPreferences.getInstance();
+                      await sp.setBool('isSet', true);
+                      await sp.setString('language_code', 'en');
+                      Navigator.pushNamed(context, "/onboarding");
                     },
                     child: const Text(
                       "English",
@@ -117,13 +122,15 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 width: double.infinity,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
                 height: 50,
                 child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       provide.changeLanguage(const Locale('hi'));
-                      Navigator.pushNamed(context, "/calculator");
+                      sp = await SharedPreferences.getInstance();
+                      await sp.setBool('isSet', true);
+                      await sp.setString('language_code', 'hi');
+                      Navigator.pushNamed(context, "/onboarding");
                     },
                     child: const Text(
                       "हिंदी",
@@ -132,13 +139,15 @@ class _HomePageState extends State<HomePage> {
               ),
               Container(
                 width: double.infinity,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
                 height: 50,
                 child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       provide.changeLanguage(const Locale('te'));
-                      Navigator.pushNamed(context, "/calculator");
+                      sp = await SharedPreferences.getInstance();
+                      await sp.setBool('isSet', true);
+                      await sp.setString('language_code', 'te');
+                      Navigator.pushNamed(context, "/onboarding");
                     },
                     child: const Text(
                       "టెలిగు",

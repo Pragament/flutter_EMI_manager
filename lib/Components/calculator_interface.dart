@@ -152,6 +152,12 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.popAndPushNamed(context, '/onboarding');
+          },
+        ),
         title: Text(AppLocalizations.of(context)!.lang),
         actions: [
           !updateProfileFlag
@@ -193,21 +199,21 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
                 max: 100000000,
                 amount: loanAmount,
                 updateValue: updateValue,
-                title: AppLocalizations.of(context)!.loanAmount),
+                title: AppLocalizations.of(context)!.loanAmount, unit: '',),
             AmountSlider(
                 id: 2,
                 min: 1,
                 max: 30,
                 amount: loanTenure,
                 updateValue: updateValue,
-                title: AppLocalizations.of(context)!.tenure),
+                title: AppLocalizations.of(context)!.tenure, unit: '',),
             AmountSlider(
                 id: 3,
                 min: 1,
                 max: 15,
                 amount: intrestRate,
                 updateValue: updateValue,
-                title: AppLocalizations.of(context)!.intrest),
+                title: AppLocalizations.of(context)!.intrest, unit: '',),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Column(

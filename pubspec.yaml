@@ -40,6 +40,8 @@ dependencies:
   shared_preferences:
   flutter_localizations:
     sdk : flutter
+  introduction_screen: ^3.1.14
+  easy_localization: ^3.0.7
 
 dev_dependencies:
   flutter_test:
