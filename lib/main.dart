@@ -1,3 +1,4 @@
+import 'package:emi_calculator/Components/onboarding_carousel.dart';
 import 'package:emi_calculator/Components/profile_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -11,14 +12,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences sp = await SharedPreferences.getInstance();
   final String languageCode = sp.getString('language_code') ?? 'en';
+  final bool isSet = sp.getBool('isSet') ?? false;
+
   runApp(MyApp(
     locale: languageCode,
+    isSet: isSet,
   ));
 }
 
 class MyApp extends StatelessWidget {
   final String? locale;
-  const MyApp({super.key, this.locale});
+  final bool isSet;
+  const MyApp({super.key, this.locale, required this.isSet});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +35,7 @@ class MyApp extends StatelessWidget {
         builder: (context, provider, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            locale: locale == ""
-                ? const Locale('en')
-                : provider.applocale ?? Locale(locale!),
+            locale: provider.applocale ?? Locale(locale!),
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
@@ -41,11 +44,14 @@ class MyApp extends StatelessWidget {
             ],
             supportedLocales: const [
               Locale('en'), // English
-              Locale('hi'), // hindi
-              Locale('te') // telegu
+              Locale('hi'), // Hindi
+              Locale('te') // Telugu
             ],
+            initialRoute: isSet ? '/calculator' : '/',
             routes: {
               "/": (context) => const HomePage(),
+              "/home": (context) => const HomePage(),
+              "/onboarding": (context) => OnboardingScreen(),
               "/calculator": (context) => const CalculatorInterface(),
               "/profiles": (context) => const ProfileList(),
             },
@@ -57,9 +63,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-  });
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -140,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                     "టెలిగు",
                     style: TextStyle(fontSize: 20),
                   )),
-            ) 
+            )
           ]),
         );
       }),
