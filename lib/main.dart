@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                     "టెలిగు",
                     style: TextStyle(fontSize: 20),
                   )),
-            )
+            ) 
           ]),
         );
       }),
