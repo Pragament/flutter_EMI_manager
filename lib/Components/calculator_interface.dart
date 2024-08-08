@@ -21,7 +21,7 @@ class CalculatorInterface extends StatefulWidget {
 }
 
 class _CalculatorInterfaceState extends State<CalculatorInterface> {
-  late double monthlyEmi, totalIntrest = 0, totalPayment = 0, years = 0;
+  late double monthlyEmi = 0, totalIntrest = 0, totalPayment = 0, years = 0;
 
   final TextEditingController _textController = TextEditingController();
 
@@ -33,6 +33,22 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
 
   List<String>? profileList = List.empty(growable: true);
   List<LoanProfile> myList = List.empty(growable: true);
+
+  List<double> data = List.empty(growable: true);
+
+  int date = DateTime.now().year;
+
+  double tenure = 0,
+      loanAmountTable = 0,
+      intrestRateTable = 0,
+      monthlyEmiTable = 0;
+
+  double openingbalance = 0,
+      mothlyPayment = 0,
+      computedDue = 0,
+      principleDue = 0,
+      principleBalance = 0,
+      yearlyEmi = 0;
 
   void getProfiles() async {
     sp = await SharedPreferences.getInstance();
@@ -133,6 +149,34 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
     }
   }
 
+  void calculateData() {
+    getProfile();
+    if (openingbalance <= 0) {
+      return;
+    }
+    for (var i = 0; i < 12; i++) {
+      computedDue = (openingbalance * (intrestRate / 100)) / 12;
+      openingbalance -= (monthlyEmi - computedDue);
+      principleBalance = openingbalance;
+      principleDue += monthlyEmi - computedDue;
+      date + 1;
+    }
+    // yearlyEmi = monthlyEmi * 12;
+    data.add(principleDue);
+    setState(() {});
+  }
+
+  void getProfile() {
+    openingbalance = loanAmount;
+    principleBalance = loanAmount;
+    yearlyEmi = monthlyEmi * 12;
+    computedDue = 0;
+    openingbalance = 0;
+    principleBalance = 0;
+    principleDue = 0;
+    date = DateTime.now().year;
+  }
+
   @override
   void initState() {
     if (updateProfileFlag) {
@@ -145,6 +189,7 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
 
     instantiate();
     getProfiles();
+    getProfile();
     calculateTotal();
     super.initState();
   }
@@ -171,11 +216,19 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
           TextButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => TableAndChart(
-                          tenure: years,
-                          monthlyEmi: monthlyEmi,
-                          loanAmount: loanAmount,
-                          intrestRate: intrestRate,
+                    builder: (context) => Scaffold(
+                          appBar: AppBar(
+                            title: const Text("Amortization schedule"),
+                          ),
+                          body: Center(
+                            child: SingleChildScrollView(
+                                child: TableAndChart(
+                              tenure: years,
+                              monthlyEmi: monthlyEmi,
+                              loanAmount: loanAmount,
+                              intrestRate: intrestRate,
+                            )),
+                          ),
                         )));
               },
               child: const Text("chart")),
@@ -272,6 +325,74 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
                 ],
               ),
             ),
+            Table(border: TableBorder.all(color: Colors.black), children: [
+              const TableRow(children: [
+                TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Center(child: Text("year"))),
+                TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(child: Text("Yearly EMI")),
+                    )),
+                TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Intrest paid yearly"),
+                    )),
+                TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Padding(
+                      padding: EdgeInsets.all(5.0),
+                      child: Center(child: Text("principle paid Yearly")),
+                    )),
+                TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(child: Text("closing balance")),
+                    )),
+              ]),
+              TableRow(children: [
+                TableCell(child: Center(child: Text(date.toString()))),
+                const TableCell(child: Center(child: Text("-"))),
+                const TableCell(child: Center(child: Text("-"))),
+                const TableCell(child: Center(child: Text("-"))),
+                TableCell(
+                    child: Center(
+                        child: Text(principleBalance.toInt().toString()))),
+              ]),
+              ...List.generate(years.toInt(), (index) {
+                calculateData();
+                return openingbalance > 0
+                    ? TableRow(children: [
+                        TableCell(
+                            child: Center(child: Text((date++).toString()))),
+                        TableCell(
+                            child: Center(
+                                child: Text(indianFormatNumber(yearlyEmi)))),
+                        TableCell(
+                            child: Center(
+                                child: Text(indianFormatNumber(computedDue)))),
+                        TableCell(
+                            child: Center(
+                                child: Text(indianFormatNumber(principleDue)))),
+                        TableCell(
+                            child: Center(
+                                child:
+                                    Text(principleBalance.toInt().toString()))),
+                      ])
+                    : const TableRow(children: [
+                        TableCell(child: Text("year")),
+                        TableCell(child: Text("")),
+                        TableCell(child: Text("")),
+                        TableCell(child: Text("")),
+                        TableCell(child: Text("")),
+                      ]);
+              }),
+            ]),
           ]),
         ),
       ),

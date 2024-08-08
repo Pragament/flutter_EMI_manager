@@ -77,8 +77,8 @@ class _HomePageState extends State<HomePage> {
     final bool isSet = sp.getBool('isSet') ?? false;
 
     if (isSet) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const CalculatorInterface()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const CalculatorInterface()));
     }
   }
 
@@ -91,66 +91,63 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: true,
-        body: Consumer<LanguageChangeController>(
-            builder: (context, provide, child) {
-          return Center(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  "Select a language",
-                  style: TextStyle(fontSize: 20),
-                ),
+      resizeToAvoidBottomInset: true,
+      body: Consumer<LanguageChangeController>(
+          builder: (context, provide, child) {
+        return Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                "Select a language",
+                style: TextStyle(fontSize: 20),
               ),
-              Container(
-                width: double.infinity,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: () {
-                      provide.changeLanguage(const Locale('en'));
-                      Navigator.pushNamed(context, "/calculator");
-                    },
-                    child: const Text(
-                      "English",
-                      style: TextStyle(fontSize: 18),
-                    )),
-              ),
-              Container(
-                width: double.infinity,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: () {
-                      provide.changeLanguage(const Locale('hi'));
-                      Navigator.pushNamed(context, "/calculator");
-                    },
-                    child: const Text(
-                      "हिंदी",
-                      style: TextStyle(fontSize: 20),
-                    )),
-              ),
-              Container(
-                width: double.infinity,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
-                height: 50,
-                child: ElevatedButton(
-                    onPressed: () {
-                      provide.changeLanguage(const Locale('te'));
-                      Navigator.pushNamed(context, "/calculator");
-                    },
-                    child: const Text(
-                      "టెలిగు",
-                      style: TextStyle(fontSize: 20),
-                    )),
-              )
-            ]),
-          );
-        }));
+            ),
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () {
+                    provide.changeLanguage(const Locale('en'));
+                    Navigator.pushNamed(context, "/calculator");
+                  },
+                  child: const Text(
+                    "English",
+                    style: TextStyle(fontSize: 18),
+                  )),
+            ),
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () {
+                    provide.changeLanguage(const Locale('hi'));
+                    Navigator.pushNamed(context, "/calculator");
+                  },
+                  child: const Text(
+                    "हिंदी",
+                    style: TextStyle(fontSize: 20),
+                  )),
+            ),
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+              height: 50,
+              child: ElevatedButton(
+                  onPressed: () {
+                    provide.changeLanguage(const Locale('te'));
+                    Navigator.pushNamed(context, "/calculator");
+                  },
+                  child: const Text(
+                    "టెలిగు",
+                    style: TextStyle(fontSize: 20),
+                  )),
+            )
+          ]),
+        );
+      }),
+    );
   }
 }
