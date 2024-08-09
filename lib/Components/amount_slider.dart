@@ -8,14 +8,16 @@ class AmountSlider extends StatefulWidget {
   final Function(double, int) updateValue;
   final int id;
 
-  const AmountSlider(
-      {super.key,
-      required this.amount,
-      required this.min,
-      required this.max,
-      required this.updateValue,
-      required this.id,
-      required this.title, required String unit});
+  const AmountSlider({
+    super.key,
+    required this.amount,
+    required this.min,
+    required this.max,
+    required this.updateValue,
+    required this.id,
+    required this.title,
+    required String unit,
+  });
 
   @override
   State<AmountSlider> createState() => _AmountSliderState();
@@ -26,19 +28,11 @@ class _AmountSliderState extends State<AmountSlider> {
   final TextEditingController _textController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  String indianFormatNumber(double amount, int id) {
-    if (id == 2) return amount.toInt().toString();
-    String format =
-        NumberFormat.currency(locale: 'HI', symbol: '₹ ', decimalDigits: 0)
-            .format(amount.toInt())
-            .toString();
-    return format;
-  }
-
   @override
   void initState() {
     super.initState();
-    amount = widget.amount;
+    // Ensure `amount` is within the range
+    amount = widget.amount.clamp(widget.min, widget.max);
   }
 
   @override
@@ -61,79 +55,91 @@ class _AmountSliderState extends State<AmountSlider> {
                 child: TextButton(
                   onPressed: () {
                     showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            content: Form(
-                              key: _formKey,
-                              child: TextFormField(
-                                  keyboardType: TextInputType.number,
-                                  decoration: InputDecoration(
-                                      hintText: AppLocalizations.of(context)!
-                                          .enterAmount),
-                                  controller: _textController,
-                                  onChanged: (value) {},
-                                  validator: (value) {
-                                    if (value == '' ||
-                                        double.parse(value!) < widget.min ||
-                                        double.parse(value) > widget.max) {
-                                      return "please enter a valid value";
-                                    }
-                                    return null;
-                                  }),
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Form(
+                            key: _formKey,
+                            child: TextFormField(
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                hintText:
+                                    AppLocalizations.of(context)!.enterAmount,
+                              ),
+                              controller: _textController,
+                              onChanged: (value) {},
+                              validator: (value) {
+                                if (value == '' ||
+                                    double.tryParse(value!) == null ||
+                                    double.parse(value) < widget.min ||
+                                    double.parse(value) > widget.max) {
+                                  return "Please enter a valid value";
+                                }
+                                return null;
+                              },
                             ),
-                            actions: [
-                              ElevatedButton(
-                                  style: TextButton.styleFrom(
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8))),
-                                  ),
-                                  onPressed: () {
-                                    _textController.text = "";
-                                    setState(() {});
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                      AppLocalizations.of(context)!.cancel)),
-                              ElevatedButton(
-                                  style: TextButton.styleFrom(
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8))),
-                                  ),
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      amount =
-                                          double.parse(_textController.text);
-                                      widget.updateValue(amount!, widget.id);
-                                      _textController.text = "";
-                                      setState(() {});
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  child:
-                                      Text(AppLocalizations.of(context)!.save)),
-                            ],
-                          );
-                        });
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              style: TextButton.styleFrom(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)),
+                                ),
+                              ),
+                              onPressed: () {
+                                _textController.text = "";
+                                Navigator.pop(context);
+                              },
+                              child: Text(AppLocalizations.of(context)!.cancel),
+                            ),
+                            ElevatedButton(
+                              style: TextButton.styleFrom(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)),
+                                ),
+                              ),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  double newAmount =
+                                      double.parse(_textController.text);
+                                  // Ensure `newAmount` is within the range
+                                  amount =
+                                      newAmount.clamp(widget.min, widget.max);
+                                  widget.updateValue(amount!, widget.id);
+                                  _textController.text = "";
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Text(AppLocalizations.of(context)!.save),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
-                  child: Text(widget.id == 3
-                      ? amount!.toStringAsFixed(2)
-                      : indianFormatNumber(amount!, widget.id)),
+                  child: Text(
+                    widget.id == 3
+                        ? amount!.toStringAsFixed(2)
+                        : indianFormatNumber(amount!, widget.id),
+                  ),
                 ),
               ),
             ],
           ),
           Slider(
-              value: amount!,
-              min: widget.min,
-              max: widget.max,
-              onChanged: (newValue) {
-                amount = newValue;
-                widget.updateValue(newValue, widget.id);
-                setState(() {});
-              }),
+            value: amount!,
+            min: widget.min,
+            max: widget.max,
+            onChanged: (newValue) {
+              // Ensure `newValue` is within the range
+              amount = newValue.clamp(widget.min, widget.max);
+              widget.updateValue(amount!, widget.id);
+              setState(() {});
+            },
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -147,5 +153,14 @@ class _AmountSliderState extends State<AmountSlider> {
         ],
       ),
     );
+  }
+
+  String indianFormatNumber(double amount, int id) {
+    if (id == 2) return amount.toInt().toString();
+    String format =
+        NumberFormat.currency(locale: 'HI', symbol: '₹ ', decimalDigits: 0)
+            .format(amount.toInt())
+            .toString();
+    return format;
   }
 }
