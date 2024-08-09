@@ -1,5 +1,7 @@
+import 'package:emi_calculator/Components/add_loan_screen.dart';
+import 'package:emi_calculator/Components/home_screen.dart';
+import 'package:emi_calculator/Components/lend_loan.dart.dart';
 import 'package:emi_calculator/Components/onboarding_carousel.dart';
-import 'package:emi_calculator/Components/profile_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -53,7 +55,15 @@ class MyApp extends StatelessWidget {
               "/home": (context) => const HomePage(),
               "/onboarding": (context) => OnboardingScreen(),
               "/calculator": (context) => const CalculatorInterface(),
-              "/profiles": (context) => const ProfileList(),
+              "/profiles": (context) => const LoanListScreen(),
+              "/addLoan": (context) {
+                final args = ModalRoute.of(context)!.settings.arguments as Map?;
+                return AddLoan(actionCallback: args?['actionCallback']);
+              },
+              "/addLend": (context) {
+                final args = ModalRoute.of(context)!.settings.arguments as Map?;
+                return AddLend(actionCallback: args?['actionCallback']);
+              },
             },
           );
         },

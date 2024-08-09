@@ -2,19 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
-// ignore: must_be_immutable
 class LoanProfile extends StatelessWidget {
-  String? dateTime,
-      profilename,
-      totalIntrestAmount,
-      totalAmount,
-      monthlyEmi,
-      tenureInYears,
-      loanvalue,
-      intrestrate;
-
+  String? dateTime, profilename, tenureInYears;
+  double? totalIntrestAmount, totalAmount, monthlyEmi, intrestrate, loanvalue;
   final int? id;
-
   final Function(int)? delete;
   final Function(int)? update;
 
@@ -33,39 +24,38 @@ class LoanProfile extends StatelessWidget {
     this.update,
   });
 
-  factory LoanProfile.fromJson(Map<String, dynamic> json) => LoanProfile(
-        dateTime: json["dateTime"],
-        profilename: json["profilename"],
-        totalAmount: json["totalAmount"],
-        totalIntrestAmount: json["totalIntrestAmount"],
-        tenureInYears: json["tenureInYears"],
-        monthlyEmi: json["monthlyEmi"],
-        intrestrate: json["intrestrate"],
-        loanvalue: json["loanvalue"],
-        id: json["id"],
-        delete: (int) => dynamic,
-        update: (int) => dynamic,
-      );
+  factory LoanProfile.fromJson(Map<String, dynamic> json) {
+    return LoanProfile(
+      dateTime: json['dateTime'],
+      profilename: json['profilename'],
+      totalAmount: (json['totalAmount'] as num?)?.toDouble(),
+      totalIntrestAmount: (json['totalIntrestAmount'] as num?)?.toDouble(),
+      monthlyEmi: (json['monthlyEmi'] as num?)?.toDouble(),
+      tenureInYears: json['tenureInYears'],
+      intrestrate: (json['intrestrate'] as num?)?.toDouble(),
+      loanvalue: (json['loanvalue'] as num?)?.toDouble(),
+      id: json['id'],
+    );
+  }
 
-  Map<String, dynamic> toJson() => {
-        "dateTime": dateTime,
-        "profilename": profilename,
-        "totalAmount": totalAmount,
-        "totalIntrestAmount": totalIntrestAmount,
-        "tenureInYears": tenureInYears,
-        "monthlyEmi": monthlyEmi,
-        "intrestrate": intrestrate,
-        "loanvalue": loanvalue,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      "dateTime": dateTime,
+      "profilename": profilename,
+      "totalAmount": totalAmount,
+      "totalIntrestAmount": totalIntrestAmount,
+      "tenureInYears": tenureInYears,
+      "monthlyEmi": monthlyEmi,
+      "intrestrate": intrestrate,
+      "loanvalue": loanvalue,
+      "id": id,
+    };
+  }
 
-  String indianFormatNumber(String amount) {
-    double tAmount = double.parse(amount);
-    String numberFormat =
-        NumberFormat.currency(locale: 'HI', symbol: '₹ ', decimalDigits: 0)
-            .format(tAmount.toInt())
-            .toString();
-
-    return numberFormat;
+  String indianFormatNumber(double amount) {
+    return NumberFormat.currency(locale: 'HI', symbol: '₹ ', decimalDigits: 0)
+        .format(amount)
+        .toString();
   }
 
   @override
