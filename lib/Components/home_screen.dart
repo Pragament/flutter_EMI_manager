@@ -1,4 +1,3 @@
-import 'package:emi_calculator/Components/add_loan_screen.dart';
 import 'package:emi_calculator/Components/calculator_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +63,7 @@ class _LoanListScreenState extends State<LoanListScreen> {
               'Saved Loans',
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-            SizedBox(width: 8), // Space between texts
+            SizedBox(width: 8),
             Text(
               ' Saved Lends',
               style: TextStyle(color: Colors.white, fontSize: 16),
@@ -90,20 +89,22 @@ class _LoanListScreenState extends State<LoanListScreen> {
                   context,
                   '/addLoan',
                   arguments: {'actionCallback': widget.actionCallback},
-                );
+                ).then((_) {
+                  // Refresh ProfileList screen
+                  setState(() {});
+                });
               },
-              heroTag: 'addLoanButton', // Unique heroTag
-              backgroundColor: secondaryColor, // Set the background color
+              heroTag: 'addLoanButton',
+              backgroundColor: secondaryColor,
               label: const Text('Add New Loan'),
               icon: const Icon(Icons.add),
-              // Set a consistent minimum size
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),
           ),
           Positioned(
-            bottom: 80, // Adjust this value to position the second FAB
+            bottom: 80,
             right: 16,
             child: FloatingActionButton.extended(
               onPressed: () {
@@ -111,13 +112,15 @@ class _LoanListScreenState extends State<LoanListScreen> {
                   context,
                   '/addLend',
                   arguments: {'actionCallback': widget.actionCallback},
-                );
+                ).then((_) {
+                  // Refresh ProfileList screen
+                  setState(() {});
+                });
               },
-              heroTag: 'addLendLoanButton', // Unique heroTag
-              backgroundColor: secondaryColor, // Set the background color
+              heroTag: 'addLendLoanButton',
+              backgroundColor: secondaryColor,
               label: const Text('Add Lend Loan'),
-              icon: const Icon(Icons.add), // Use a different icon if needed
-              // Set a consistent minimum size
+              icon: const Icon(Icons.add),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
