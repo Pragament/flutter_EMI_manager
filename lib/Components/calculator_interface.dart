@@ -106,10 +106,12 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
 
   void update() {
     if (myList.isNotEmpty) {
-      double tPayment = double.parse(myList[profileIndex].totalAmount!);
-      double tIntrest = double.parse(myList[profileIndex].totalIntrestAmount!);
+      double tPayment =
+          double.parse(myList[profileIndex].totalAmount.toString());
+      double tIntrest =
+          double.parse(myList[profileIndex].totalIntrestAmount!.toString());
       double tYears = double.parse(myList[profileIndex].tenureInYears!);
-      double mEmi = double.parse(myList[profileIndex].monthlyEmi!);
+      double mEmi = double.parse(myList[profileIndex].monthlyEmi.toString());
       if (years != 15 &&
           totalIntrest.toInt() != 668622 &&
           totalPayment != 1668662) {
@@ -117,13 +119,14 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
           updateProfileFlag = false;
           myList[profileIndex].dateTime =
               DateFormat('\tkk:mm:ss\nEEE d MMM yyyy').format(DateTime.now());
-          myList[profileIndex].totalAmount = totalPayment.toInt().toString();
+          myList[profileIndex].totalAmount = totalPayment.toInt().toDouble();
           myList[profileIndex].totalIntrestAmount =
-              totalIntrest.toInt().toString();
+              totalIntrest.toInt().toDouble();
           myList[profileIndex].tenureInYears = years.toInt().toString();
-          myList[profileIndex].monthlyEmi = monthlyEmi.toInt().toString();
-          myList[profileIndex].intrestrate = intrestRate.toStringAsFixed(2);
-          myList[profileIndex].loanvalue = loanAmount.toInt().toString();
+          myList[profileIndex].monthlyEmi = monthlyEmi.toInt().toDouble();
+          myList[profileIndex].intrestrate =
+              double.parse(intrestRate.toStringAsFixed(2));
+          myList[profileIndex].loanvalue = loanAmount.toInt().toDouble();
           List<String> data =
               myList.map((e) => jsonEncode(e.toJson())).toList();
           sp.setStringList("profileList", data);
@@ -134,12 +137,13 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
           updateProfileFlag = false;
           myList[profileIndex].dateTime =
               DateFormat('\tkk:mm:ss\nEEE d MMM yyyy').format(DateTime.now());
-          myList[profileIndex].totalAmount = tPayment.toInt().toString();
-          myList[profileIndex].totalIntrestAmount = tIntrest.toInt().toString();
+          myList[profileIndex].totalAmount = tPayment.toInt().toDouble();
+          myList[profileIndex].totalIntrestAmount = tIntrest.toInt().toDouble();
           myList[profileIndex].tenureInYears = tYears.toInt().toString();
-          myList[profileIndex].monthlyEmi = mEmi.toInt().toString();
-          myList[profileIndex].intrestrate = intrestRate.toStringAsFixed(2);
-          myList[profileIndex].loanvalue = loanAmount.toInt().toString();
+          myList[profileIndex].monthlyEmi = mEmi.toInt().toDouble();
+          myList[profileIndex].intrestrate =
+              double.parse(intrestRate.toStringAsFixed(2));
+          myList[profileIndex].loanvalue = loanAmount.toInt().toDouble();
           List<String> data =
               myList.map((e) => jsonEncode(e.toJson())).toList();
           sp.setStringList("profileList", data);
@@ -199,7 +203,7 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.popAndPushNamed(context, '/onboarding');
           },
@@ -259,26 +263,32 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
         child: Center(
           child: Column(children: [
             AmountSlider(
-                id: 1,
-                min: 100000,
-                max: 100000000,
-                amount: loanAmount,
-                updateValue: updateValue,
-                title: AppLocalizations.of(context)!.loanAmount, unit: '',),
+              id: 1,
+              min: 100000,
+              max: 100000000,
+              amount: loanAmount,
+              updateValue: updateValue,
+              title: AppLocalizations.of(context)!.loanAmount,
+              unit: '',
+            ),
             AmountSlider(
-                id: 2,
-                min: 1,
-                max: 30,
-                amount: loanTenure,
-                updateValue: updateValue,
-                title: AppLocalizations.of(context)!.tenure, unit: '',),
+              id: 2,
+              min: 1,
+              max: 30,
+              amount: loanTenure,
+              updateValue: updateValue,
+              title: AppLocalizations.of(context)!.tenure,
+              unit: '',
+            ),
             AmountSlider(
-                id: 3,
-                min: 1,
-                max: 15,
-                amount: intrestRate,
-                updateValue: updateValue,
-                title: AppLocalizations.of(context)!.intrest, unit: '',),
+              id: 3,
+              min: 1,
+              max: 15,
+              amount: intrestRate,
+              updateValue: updateValue,
+              title: AppLocalizations.of(context)!.intrest,
+              unit: '',
+            ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
               child: Column(
@@ -451,16 +461,16 @@ class _CalculatorInterfaceState extends State<CalculatorInterface> {
                                             .format(DateTime.now()),
                                         profilename: _textController.text,
                                         totalAmount:
-                                            totalPayment.toInt().toString(),
+                                            totalPayment.toInt().toDouble(),
                                         totalIntrestAmount:
-                                            totalIntrest.toInt().toString(),
+                                            totalIntrest.toInt().toDouble(),
                                         tenureInYears: years.toInt().toString(),
                                         monthlyEmi:
-                                            monthlyEmi.toInt().toString(),
-                                        intrestrate:
-                                            intrestRate.toStringAsFixed(2),
+                                            monthlyEmi.toInt().toDouble(),
+                                        intrestrate: double.parse(
+                                            intrestRate.toStringAsFixed(2)),
                                         loanvalue:
-                                            loanAmount.toInt().toString(),
+                                            loanAmount.toInt().toDouble(),
                                       ));
 
                                       List<String> data = myList

@@ -1,8 +1,11 @@
+import 'package:emi_calculator/Components/add_loan_screen.dart';
+import 'package:emi_calculator/Components/home_screen.dart';
+import 'package:emi_calculator/Components/lend_loan.dart';
 import 'package:emi_calculator/Components/onboarding_carousel.dart';
-import 'package:emi_calculator/Components/profile_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:emi_calculator/Components/calculator_interface.dart';
 import 'package:emi_calculator/controller/language_change_controller.dart';
@@ -33,7 +36,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<LanguageChangeController>(
         builder: (context, provider, child) {
-          return MaterialApp(
+          return GetMaterialApp(
             debugShowCheckedModeBanner: false,
             locale: provider.applocale ?? Locale(locale!),
             localizationsDelegates: const [
@@ -53,7 +56,15 @@ class MyApp extends StatelessWidget {
               "/home": (context) => const HomePage(),
               "/onboarding": (context) => OnboardingScreen(),
               "/calculator": (context) => const CalculatorInterface(),
-              "/profiles": (context) => const ProfileList(),
+              "/profiles": (context) => const LoanListScreen(),
+              "/addLoan": (context) {
+                final args = ModalRoute.of(context)!.settings.arguments as Map?;
+                return AddLoan(actionCallback: args?['actionCallback']);
+              },
+              "/addLend": (context) {
+                final args = ModalRoute.of(context)!.settings.arguments as Map?;
+                return AddLend(actionCallback: args?['actionCallback']);
+              },
             },
           );
         },
